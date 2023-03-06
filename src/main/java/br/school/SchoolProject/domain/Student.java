@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,6 +33,7 @@ public class Student {
 	private String studentName;
 	
 	@Column(name = "DATA_NASC")
+	@JsonFormat(pattern = "dd/MM/yyyy")
 	private LocalDate birthday;
 	
 	@Column(name = "ALUNO_TEL")

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class StudentForm {
+public class StudentUpdateForm {
 
 	private Long studentId;
 	

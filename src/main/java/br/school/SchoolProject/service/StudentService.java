@@ -12,18 +12,21 @@ import org.springframework.stereotype.Service;
 
 import br.school.SchoolProject.domain.Student;
 import br.school.SchoolProject.domain.filter.StudentFilter;
-import br.school.SchoolProject.domain.form.StudentForm;
+import br.school.SchoolProject.domain.form.StudentCreateForm;
+import br.school.SchoolProject.domain.form.StudentUpdateForm;
 import br.school.SchoolProject.repository.StudentRepository;
 import br.school.SchoolProject.utils.Conditions;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class SchoolService extends Conditions<Student> {
+public class StudentService extends Conditions<Student> {
 
 	private final StudentRepository repository;
 
 	private final ModelMapper mapper;
+	
+	private Long count = 1l;
 
 	public Page<Student> findStudents(StudentFilter filter, Pageable pageable) {
 
@@ -32,13 +35,40 @@ public class SchoolService extends Conditions<Student> {
 				.and(like(STUDENT_NAME, filter.getStudentName())), pageable);
 	}
 
-	public Student createStudent(StudentForm form) {
-		var count = repository.count();
-		form.setStudentId(count + 1);
+	public Student createStudent(StudentCreateForm form) {
 
 		var newStudent = new Student();
 		mapper.map(form, newStudent);
 
+		getId(newStudent);
+		
 		return repository.save(newStudent);
+	}
+	
+	private void getId(Student student) {
+		
+		
+		if(repository.existsById(count)) {
+			count = count + 1L;
+			getId(student);
+		} else {
+			student.setStudentId(count);
+		}
+	}
+	
+	
+	public Student updateStudent(StudentUpdateForm form, Long id) {
+		var student = repository.findById(id).orElse(null);
+		
+		mapper.map(form, student);
+		
+		return repository.save(student);
+	}
+	
+	public void deleteStudent(Long id) {
+		if(repository.existsById(id)) {			
+			repository.deleteById(id);
+			
+		}
 	}
 }
